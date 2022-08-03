@@ -1,25 +1,45 @@
 'use strict';
+import gulp from 'gulp';
+import { deleteAsync } from 'del';
+import newer from 'gulp-newer';
+import plumber from 'gulp-plumber';
+import rename from 'gulp-rename';
 
-const gulp = require('gulp');
-const del = require('del');
-const newer = require('gulp-newer');
-const plumber = require('gulp-plumber');
-const rename = require('gulp-rename');
+// import imagemin from 'gulp-imagemin';
+import svgmin from 'gulp-svgmin';
+import svgstore from 'gulp-svgstore';
 
-const imagemin = require('gulp-imagemin');
-const svgmin = require('gulp-svgmin');
-const svgstore = require('gulp-svgstore');
+import gulpSass from 'gulp-sass';
+import dartSass from 'sass';
+import postcss from 'gulp-postcss';
+import autoprefixer from 'autoprefixer';
+import objectFit from 'postcss-object-fit-images';
+import minify from 'gulp-csso';
 
-const sass = require('gulp-sass');
-const postcss = require('gulp-postcss');
-const autoprefixer = require('autoprefixer');
-const objectFit = require('postcss-object-fit-images');
-const minify = require('gulp-csso');
+import browserSync from 'browser-sync';
 
-const server = require('browser-sync').create();
+const sass = gulpSass(dartSass);
+
+// const gulp = require('gulp');
+// const del = require('del');
+// const newer = require('gulp-newer');
+// const plumber = require('gulp-plumber');
+// const rename = require('gulp-rename');
+//
+// const imagemin = require('gulp-imagemin');
+// const svgmin = require('gulp-svgmin');
+// const svgstore = require('gulp-svgstore');
+//
+// const sass = require('gulp-sass');
+// const postcss = require('gulp-postcss');
+// const autoprefixer = require('autoprefixer');
+// const objectFit = require('postcss-object-fit-images');
+// const minify = require('gulp-csso');
+
+const server = browserSync.create();
 
 gulp.task('clean', function () {
-  return del('build');
+  return deleteAsync('build');
 });
 
 gulp.task('copy', function () {
@@ -39,19 +59,19 @@ gulp.task('images', function () {
     '!src/img/sprite/*.svg'
   ])
     .pipe(newer('build/img'))
-    .pipe(imagemin([
-      imagemin.optipng({
-        optimizationLevel: 3
-      }),
-      imagemin.jpegtran({
-        progressive: true
-      }),
-      imagemin.svgo({
-        plugins: [{
-          removeViewBox: false
-        }]
-      })
-    ]))
+    // .pipe(imagemin([
+    //   imagemin({
+    //     optimizationLevel: 3
+    //   }),
+    //   imagemin({
+    //     progressive: true
+    //   }),
+    //   imagemin({
+    //     plugins: [{
+    //       removeViewBox: false
+    //     }]
+    //   })
+    // ]))
     .pipe(gulp.dest('build/img'));
 });
 
