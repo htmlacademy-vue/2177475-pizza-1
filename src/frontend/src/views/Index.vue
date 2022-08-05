@@ -1,149 +1,20 @@
 <template>
   <div id="app">
-    <header class="header">
-      <div class="header__logo">
-        <a href="index.html" class="logo">
-          <img
-            src="../assets/img/logo.svg"
-            alt="V!U!E! Pizza logo"
-            width="90"
-            height="40"
-          />
-        </a>
-      </div>
-      <div class="header__cart">
-        <a href="cart.html">0 ₽</a>
-      </div>
-      <div class="header__user">
-        <a href="#" class="header__login"><span>Войти</span></a>
-      </div>
-    </header>
-
     <main class="content">
       <form action="#" method="post">
         <div class="content__wrapper">
           <h1 class="title title--big">Конструктор пиццы</h1>
 
-          <div class="content__dough">
-            <div class="sheet">
-              <h2 class="title title--small sheet__title">Выберите тесто</h2>
+          <builder-dough-selector @selectDough="setDough($event)" />
 
-              <div class="sheet__content dough">
-                <label
-                  :class="[
-                    'dough__input',
-                    item.name === 'Тонкое'
-                      ? 'dough__input--light'
-                      : 'dough__input--large',
-                  ]"
-                  v-for="item in dough"
-                  :key="item.id"
-                >
-                  <input
-                    type="radio"
-                    name="dought"
-                    value="light"
-                    class="visually-hidden"
-                    checked
-                  />
-                  <b>{{ item.name }}</b>
-                  <span>{{ item.description }}</span>
-                </label>
-              </div>
-            </div>
-          </div>
+          <builder-size-selector @selectSize="setSize($event)" />
 
-          <div class="content__diameter">
-            <div class="sheet">
-              <h2 class="title title--small sheet__title">Выберите размер</h2>
-
-              <div class="sheet__content diameter">
-                <label
-                  class="diameter__input"
-                  :class="[
-                    { 'diameter__input--small': item.multiplier === 1 },
-                    { 'diameter__input--normal': item.multiplier === 2 },
-                    { 'diameter__input--big': item.multiplier === 3 },
-                  ]"
-                  v-for="item in sizes"
-                  :key="item.id"
-                >
-                  <input
-                    class="visually-hidden"
-                    type="radio"
-                    name="diameter"
-                    :value="[
-                      { small: item.multiplier === 1 },
-                      { normal: item.multiplier === 2 },
-                      { big: item.multiplier === 3 },
-                    ]"
-                  />
-                  <span>{{ item.name }}</span>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div class="content__ingredients">
-            <div class="sheet">
-              <h2 class="title title--small sheet__title">
-                Выберите ингредиенты
-              </h2>
-
-              <div class="sheet__content ingredients">
-                <div class="ingredients__sauce">
-                  <p>Основной соус:</p>
-
-                  <label
-                    class="radio ingredients__input"
-                    v-for="item in sauces"
-                    :key="item.id"
-                  >
-                    <input type="radio" name="sauce" value="tomato" checked />
-                    <span>{{ item.name }}</span>
-                  </label>
-                </div>
-
-                <div class="ingredients__filling">
-                  <p>Начинка:</p>
-
-                  <ul class="ingredients__list">
-                    <li
-                      class="ingredients__item"
-                      v-for="item in ingredients"
-                      :key="item.id"
-                    >
-                      <span class="filling filling--mushrooms">{{
-                        item.name
-                      }}</span>
-
-                      <div class="counter counter--orange ingredients__counter">
-                        <button
-                          type="button"
-                          class="counter__button counter__button--minus"
-                          disabled
-                        >
-                          <span class="visually-hidden">Меньше</span>
-                        </button>
-                        <input
-                          type="text"
-                          name="counter"
-                          class="counter__input"
-                          value="0"
-                        />
-                        <button
-                          type="button"
-                          class="counter__button counter__button--plus"
-                        >
-                          <span class="visually-hidden">Больше</span>
-                        </button>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
+          <builder-ingredients-selector
+            :pizzaArea="pizzaArea"
+            :submitState="submitState"
+            @selectSauce="setSauce($event)"
+            @setIngredient="setIngredient($event)"
+          />
 
           <div class="content__pizza">
             <label class="input">
@@ -152,23 +23,21 @@
                 type="text"
                 name="pizza_name"
                 placeholder="Введите название пиццы"
+                v-model="pizzaName"
               />
             </label>
 
-            <div class="content__constructor">
-              <div class="pizza pizza--foundation--big-tomato">
-                <div class="pizza__wrapper">
-                  <div class="pizza__filling pizza__filling--ananas"></div>
-                  <div class="pizza__filling pizza__filling--bacon"></div>
-                  <div class="pizza__filling pizza__filling--cheddar"></div>
-                </div>
-              </div>
-            </div>
+            <builder-pizza-view
+              :pizzaSetup="pizzaSetup"
+              @setPizzaArea="setPizzaArea($event)"
+            />
 
-            <div class="content__result">
-              <p>Итого: 0 ₽</p>
-              <button type="button" class="button" disabled>Готовьте!</button>
-            </div>
+            <builder-price-counter
+              :pizzaPrice="fullPrice"
+              :pizzaName="pizzaName"
+              :ingredients="pizzaSetup.ingredients"
+              @pizzaSubmit="pizzaSubmit"
+            />
           </div>
         </div>
       </form>
@@ -177,17 +46,102 @@
 </template>
 
 <script>
-import { dough, ingredients, sauces, sizes } from "../static/pizza.json";
+import { ingredients, sauces, sizes } from "../static/pizza.json";
+import BuilderDoughSelector from "../modules/builder/components/BuilderDoughSelector";
+import BuilderSizeSelector from "../modules/builder/components/BuilderSizeSelector";
+import BuilderIngredientsSelector from "../modules/builder/components/BuilderIngredientsSelector";
+import BuilderPizzaView from "../modules/builder/components/BuilderPizzaView";
+import BuilderPriceCounter from "../modules/builder/components/BuilderPriceCounter";
 
 export default {
   name: "Index",
+  components: {
+    BuilderDoughSelector,
+    BuilderSizeSelector,
+    BuilderIngredientsSelector,
+    BuilderPizzaView,
+    BuilderPriceCounter,
+  },
   data() {
     return {
-      dough,
       ingredients,
       sauces,
       sizes,
+      pizzaSetup: {
+        dough: {},
+        size: {},
+        sauce: {},
+        ingredients: [],
+      },
+      pizzaName: "",
+      submitState: false,
+      pizzaArea: null,
     };
+  },
+  methods: {
+    setDough(dough) {
+      this.pizzaSetup.dough = dough;
+      console.log(this.pizzaSetup.dough);
+    },
+    setSize(size) {
+      this.pizzaSetup.size = size;
+      console.log(this.pizzaSetup.size);
+    },
+    setSauce(sauce) {
+      this.pizzaSetup.sauce = sauce;
+      console.log(this.pizzaSetup.sauce);
+    },
+    setIngredient(data) {
+      let isItem = false;
+      this.pizzaSetup.ingredients.forEach((item, index, arr) => {
+        if (item.id === data.ingredient.id) {
+          if (item.count === 0) {
+            arr.splice(index, 1);
+          }
+          isItem = true;
+        }
+      });
+      if (!isItem) {
+        this.pizzaSetup.ingredients.push(data.ingredient);
+      }
+    },
+    pizzaSubmit() {
+      this.$emit("pizzaSubmit", this.fullPrice);
+      this.clearPizza();
+      this.submitState = true;
+      setTimeout(() => {
+        this.submitState = false;
+      }, 250);
+    },
+    clearPizza() {
+      this.pizzaSetup.ingredients = [];
+      this.pizzaName = "";
+    },
+    setPizzaArea(area) {
+      this.pizzaArea = area;
+    },
+  },
+  computed: {
+    fullPrice() {
+      let price = 0;
+      if (this.pizzaSetup.dough.price) {
+        price += this.pizzaSetup.dough.price;
+      }
+      if (this.pizzaSetup.sauce.price) {
+        price += this.pizzaSetup.sauce.price;
+      }
+      if (this.pizzaSetup.ingredients) {
+        let ingredientsPrice = 0;
+        this.pizzaSetup.ingredients.forEach((item) => {
+          ingredientsPrice += item.price * item.count;
+        });
+        price += ingredientsPrice;
+      }
+      if (this.pizzaSetup.size.multiplier) {
+        price *= this.pizzaSetup.size.multiplier;
+      }
+      return price;
+    },
   },
 };
 </script>
