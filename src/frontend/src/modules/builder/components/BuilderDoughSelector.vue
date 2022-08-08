@@ -47,7 +47,7 @@ export default {
     },
   },
   mounted() {
-    this.toggleRadio(dough[0]);
+    this.toggleRadio(dough[1]);
   },
 };
 </script>

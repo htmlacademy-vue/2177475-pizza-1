@@ -80,15 +80,12 @@ export default {
   methods: {
     setDough(dough) {
       this.pizzaSetup.dough = dough;
-      console.log(this.pizzaSetup.dough);
     },
     setSize(size) {
       this.pizzaSetup.size = size;
-      console.log(this.pizzaSetup.size);
     },
     setSauce(sauce) {
       this.pizzaSetup.sauce = sauce;
-      console.log(this.pizzaSetup.sauce);
     },
     setIngredient(data) {
       let isItem = false;
