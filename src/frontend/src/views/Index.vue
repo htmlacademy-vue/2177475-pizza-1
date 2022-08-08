@@ -32,9 +32,7 @@
                 <label
                   :class="[
                     'dough__input',
-                    item.name === 'Тонкое'
-                      ? 'dough__input--light'
-                      : 'dough__input--large',
+                    'dough__input--' + doughTranslateName(item).name,
                   ]"
                   v-for="item in dough"
                   :key="item.id"
@@ -42,7 +40,7 @@
                   <input
                     type="radio"
                     name="dought"
-                    value="light"
+                    :value="doughTranslateName(item).name"
                     class="visually-hidden"
                     checked
                   />
@@ -60,11 +58,7 @@
               <div class="sheet__content diameter">
                 <label
                   class="diameter__input"
-                  :class="[
-                    { 'diameter__input--small': item.multiplier === 1 },
-                    { 'diameter__input--normal': item.multiplier === 2 },
-                    { 'diameter__input--big': item.multiplier === 3 },
-                  ]"
+                  :class="'diameter__input--' + normalizeSize(item).name()"
                   v-for="item in sizes"
                   :key="item.id"
                 >
@@ -72,11 +66,7 @@
                     class="visually-hidden"
                     type="radio"
                     name="diameter"
-                    :value="[
-                      { small: item.multiplier === 1 },
-                      { normal: item.multiplier === 2 },
-                      { big: item.multiplier === 3 },
-                    ]"
+                    :value="normalizeSize(item).name()"
                   />
                   <span>{{ item.name }}</span>
                 </label>
@@ -99,7 +89,12 @@
                     v-for="item in sauces"
                     :key="item.id"
                   >
-                    <input type="radio" name="sauce" value="tomato" checked />
+                    <input
+                      type="radio"
+                      name="sauce"
+                      :value="item.name === 'Томатный' ? 'tomato' : 'creamy'"
+                      checked
+                    />
                     <span>{{ item.name }}</span>
                   </label>
                 </div>
@@ -113,9 +108,14 @@
                       v-for="item in ingredients"
                       :key="item.id"
                     >
-                      <span class="filling filling--mushrooms">{{
-                        item.name
-                      }}</span>
+                      <span
+                        class="filling"
+                        :class="
+                          'filling--' + ingredientTranslateName(item).name()
+                        "
+                      >
+                        {{ item.name }}
+                      </span>
 
                       <div class="counter counter--orange ingredients__counter">
                         <button
@@ -178,6 +178,11 @@
 
 <script>
 import { dough, ingredients, sauces, sizes } from "../static/pizza.json";
+import {
+  ingredientTranslateName,
+  normalizeSize,
+  doughTranslateName,
+} from "../common/helper";
 
 export default {
   name: "Index",
@@ -188,6 +193,11 @@ export default {
       sauces,
       sizes,
     };
+  },
+  methods: {
+    ingredientTranslateName,
+    normalizeSize,
+    doughTranslateName,
   },
 };
 </script>
