@@ -14,9 +14,7 @@
           >
             <div @click="selectSauce(item)">
               <radio-button
-                type="radio"
                 name="sauce"
-                :radioValue="item.name === 'Томатный' ? 'tomato' : 'creamy'"
                 :value="item.name === 'Томатный' ? 'tomato' : 'creamy'"
                 checked
               />
@@ -35,11 +33,17 @@
               :key="item.id"
             >
               <drag-n-drop
-                :imageURL="item.image"
+                :ingredientName="ingredientTranslateName(item).name()"
+                :ingredientCount="item.count"
                 :pizzaArea="pizzaArea"
                 @addIngredient="setIngredient(1, item)"
               >
-                <span :class="['filling', setIngredientClass(item.image)]">
+                <span
+                  :class="[
+                    'filling',
+                    'filling--' + ingredientTranslateName(item).name(),
+                  ]"
+                >
                   {{ item.name }}
                 </span>
               </drag-n-drop>
@@ -57,6 +61,7 @@
 
 <script>
 import { sauces, ingredients } from "../../../static/pizza.json";
+import { ingredientTranslateName } from "../../../common/helper";
 import ItemCounter from "../../../common/components/ItemCounter";
 import SelectorItem from "../../../common/components/SelectorItem";
 import RadioButton from "../../../common/components/RadioButton";
@@ -87,6 +92,7 @@ export default {
     };
   },
   methods: {
+    ingredientTranslateName,
     setCompound() {
       this.pizzaCompound.splice(0, this.pizzaCompound.length);
       class Compound {

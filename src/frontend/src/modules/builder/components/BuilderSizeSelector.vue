@@ -6,11 +6,7 @@
       <div class="sheet__content diameter">
         <selector-item
           class="diameter__input"
-          :class="[
-            { 'diameter__input--small': item.multiplier === 1 },
-            { 'diameter__input--normal': item.multiplier === 2 },
-            { 'diameter__input--big': item.multiplier === 3 },
-          ]"
+          :class="['diameter__input--' + normalizeSize(item).name()]"
           v-for="item in sizes"
           :key="item.id"
         >
@@ -18,7 +14,7 @@
             <radio-button
               class="visually-hidden"
               name="diameter"
-              :radioValue="setRadioValue(item.multiplier)"
+              :value="normalizeSize(item).name()"
             />
             <span>{{ item.name }}</span>
           </div>
@@ -30,6 +26,7 @@
 
 <script>
 import { sizes } from "../../../static/pizza.json";
+import { normalizeSize } from "../../../common/helper";
 import SelectorItem from "../../../common/components/SelectorItem";
 import RadioButton from "../../../common/components/RadioButton";
 
@@ -45,14 +42,7 @@ export default {
     };
   },
   methods: {
-    setRadioValue(multiplier) {
-      if (multiplier === 1) {
-        return "small";
-      } else if (multiplier === 2) {
-        return "normal";
-      }
-      return "big";
-    },
+    normalizeSize,
     selectSize(size) {
       this.$emit("selectSize", size);
     },

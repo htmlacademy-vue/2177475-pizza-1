@@ -52,7 +52,6 @@ import BuilderSizeSelector from "../modules/builder/components/BuilderSizeSelect
 import BuilderIngredientsSelector from "../modules/builder/components/BuilderIngredientsSelector";
 import BuilderPizzaView from "../modules/builder/components/BuilderPizzaView";
 import BuilderPriceCounter from "../modules/builder/components/BuilderPriceCounter";
-
 export default {
   name: "Index",
   components: {

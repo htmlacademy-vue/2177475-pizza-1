@@ -6,7 +6,7 @@
       v-show="positionX !== 0 || positionY !== 0"
     >
       <img
-        :src="require('../../../assets/img/filling/' + normalizeImageURL)"
+        :src="require('../../../assets/img/filling/' + ingredientName + '.svg')"
         alt=""
       />
     </div>
@@ -18,9 +18,13 @@
 export default {
   name: "DragNDrop",
   props: {
-    imageURL: {
+    ingredientName: {
       type: String,
       required: true,
+    },
+    ingredientCount: {
+      type: Number,
+      default: 0,
     },
     pizzaArea: {
       required: true,
@@ -36,8 +40,10 @@ export default {
   },
   methods: {
     dragStart() {
-      document.documentElement.addEventListener("mousemove", this.dragMove);
-      document.documentElement.addEventListener("mouseup", this.dragEnd);
+      if (this.$props.ingredientCount < 3) {
+        document.documentElement.addEventListener("mousemove", this.dragMove);
+        document.documentElement.addEventListener("mouseup", this.dragEnd);
+      }
     },
     dragMove() {
       this.positionX = event.clientX - 16;
@@ -62,14 +68,9 @@ export default {
     ingredientPosition() {
       return "top: " + this.positionY + "px; left: " + this.positionX + "px;";
     },
-    normalizeImageURL() {
-      const urlArr = this.imageURL.split("/");
-      return urlArr[urlArr.length - 1];
-    },
   },
   mounted() {
     this.pizzaAreaData = this.pizzaArea.getBoundingClientRect();
-    console.log(this.pizzaAreaData);
   },
 };
 </script>

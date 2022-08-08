@@ -7,17 +7,13 @@
         <selector-item
           :class="[
             'dough__input',
-            item.name === 'Тонкое'
-              ? 'dough__input--light'
-              : 'dough__input--large',
+            'dough__input--' + doughTranslateName(item).name,
           ]"
           v-for="item in dough"
           :key="item.id"
         >
           <div @click="toggleRadio(item)">
-            <radio-button
-              :radioValue="item.name === 'Тонкое' ? 'light' : 'large'"
-            />
+            <radio-button name="dough" :value="doughTranslateName(item).name" />
             <b>{{ item.name }}</b>
             <span>{{ item.description }}</span>
           </div>
@@ -29,6 +25,7 @@
 
 <script>
 import { dough } from "../../../static/pizza.json";
+import { doughTranslateName } from "../../../common/helper";
 import RadioButton from "../../../common/components/RadioButton";
 import SelectorItem from "../../../common/components/SelectorItem";
 
@@ -44,6 +41,7 @@ export default {
     };
   },
   methods: {
+    doughTranslateName,
     toggleRadio(dough) {
       this.$emit("selectDough", dough);
     },
