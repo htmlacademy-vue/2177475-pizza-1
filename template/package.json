@@ -2,27 +2,28 @@
   "name": "vue",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "devDependencies": {
-    "@htmlacademy/editorconfig-cli": "^1.0.0",
-    "autoprefixer": "^9.4.7",
-    "browser-sync": "^2.26.3",
-    "del": "^3.0.0",
-    "eslint": "^5.16.0",
-    "eslint-config-htmlacademy": "^0.5.2",
-    "gulp": "4.0.x",
-    "gulp-csso": "^3.0.1",
-    "gulp-imagemin": "^5.0.3",
-    "gulp-newer": "^1.4.0",
-    "gulp-plumber": "^1.2.1",
-    "gulp-postcss": "^8.0.0",
-    "gulp-posthtml": "^3.0.4",
-    "gulp-rename": "^1.4.0",
-    "gulp-sass": "^4.0.2",
-    "gulp-svgmin": "^2.1.0",
-    "gulp-svgstore": "^7.0.1",
-    "postcss-object-fit-images": "^1.1.2",
-    "stylelint": "^13.7.2",
-    "stylelint-config-htmlacademy": "^0.1.4"
+    "@htmlacademy/editorconfig-cli": "*",
+    "autoprefixer": "*",
+    "browser-sync": "*",
+    "del": "^7.0.0",
+    "eslint": "*",
+    "eslint-config-htmlacademy": "*",
+    "gulp": "*",
+    "gulp-csso": "*",
+    "gulp-imagemin": "*",
+    "gulp-newer": "*",
+    "gulp-plumber": "*",
+    "gulp-postcss": "*",
+    "gulp-posthtml": "*",
+    "gulp-rename": "*",
+    "gulp-sass": "*",
+    "gulp-svgmin": "*",
+    "gulp-svgstore": "*",
+    "postcss-object-fit-images": "*",
+    "stylelint": "*",
+    "stylelint-config-htmlacademy": "*"
   },
   "scripts": {
     "editorconfig": "editorconfig-cli",
@@ -48,5 +49,8 @@
     "last 2 versions",
     "IE 11"
   ],
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "sass": "^1.54.1"
+  }
 }
