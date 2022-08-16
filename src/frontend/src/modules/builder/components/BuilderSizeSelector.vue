@@ -6,7 +6,7 @@
       <div class="sheet__content diameter">
         <selector-item
           class="diameter__input"
-          :class="['diameter__input--' + normalizeSize(item).name()]"
+          :class="['diameter__input--' + item.imgName]"
           v-for="item in sizes"
           :key="item.id"
         >
@@ -14,7 +14,9 @@
             <radio-button
               class="visually-hidden"
               name="diameter"
-              :value="normalizeSize(item).name()"
+              :value="item.imgName"
+              :radioState="item.state"
+              @justToggle="togglePizzaState(sizes, item)"
             />
             <span>{{ item.name }}</span>
           </div>
@@ -25,8 +27,7 @@
 </template>
 
 <script>
-import { sizes } from "../../../static/pizza.json";
-import { normalizeSize } from "../../../common/helper";
+import { togglePizzaState } from "@/common/helper";
 import SelectorItem from "../../../common/components/SelectorItem";
 import RadioButton from "../../../common/components/RadioButton";
 
@@ -36,19 +37,17 @@ export default {
     SelectorItem,
     RadioButton,
   },
-  data() {
-    return {
-      sizes,
-    };
+  props: {
+    sizes: {
+      type: Array,
+      required: true,
+    },
   },
   methods: {
-    normalizeSize,
+    togglePizzaState,
     selectSize(size) {
       this.$emit("selectSize", size);
     },
-  },
-  mounted() {
-    this.selectSize(sizes[2]);
   },
 };
 </script>

@@ -34,7 +34,6 @@ export default {
     return {
       positionX: 0,
       positionY: 0,
-      pizzaAreaData: 0,
       ingredientReady: false,
     };
   },
@@ -49,10 +48,10 @@ export default {
       this.positionX = event.clientX - 16;
       this.positionY = event.clientY - 16;
       this.ingredientReady =
-        this.positionX >= this.pizzaAreaData.x &&
-        this.positionX <= this.pizzaAreaData.x + this.pizzaAreaData.width &&
-        this.positionY >= this.pizzaAreaData.y &&
-        this.positionY <= this.pizzaAreaData.y + this.pizzaAreaData.height;
+        this.positionX >= this.pizzaArea.x &&
+        this.positionX <= this.pizzaArea.x + this.pizzaArea.width &&
+        this.positionY >= this.pizzaArea.y &&
+        this.positionY <= this.pizzaArea.y + this.pizzaArea.height;
     },
     dragEnd() {
       this.positionX = 0;
@@ -68,9 +67,6 @@ export default {
     ingredientPosition() {
       return "top: " + this.positionY + "px; left: " + this.positionX + "px;";
     },
-  },
-  mounted() {
-    this.pizzaAreaData = this.pizzaArea.getBoundingClientRect();
   },
 };
 </script>

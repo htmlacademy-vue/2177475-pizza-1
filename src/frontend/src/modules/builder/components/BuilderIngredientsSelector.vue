@@ -9,16 +9,17 @@
 
           <selector-item
             class="radio ingredients__input"
-            v-for="item in sauces"
-            :key="item.id"
+            v-for="sauce in sauces"
+            :key="sauce.id"
           >
-            <div @click="selectSauce(item)">
+            <div @click="selectSauce(sauce)">
               <radio-button
                 name="sauce"
-                :value="item.name === 'Томатный' ? 'tomato' : 'creamy'"
-                checked
+                :value="radioValue(sauce)"
+                :radioState="sauce.state"
+                @justToggle="togglePizzaState(sauces, sauce)"
               />
-              <span>{{ item.name }}</span>
+              <span>{{ sauce.name }}</span>
             </div>
           </selector-item>
         </div>
@@ -29,27 +30,19 @@
           <ul class="ingredients__list">
             <li
               class="ingredients__item"
-              v-for="item in pizzaCompound"
+              v-for="item in ingredients"
               :key="item.id"
             >
-              <drag-n-drop
-                :ingredientName="ingredientTranslateName(item).name()"
-                :ingredientCount="item.count"
-                :pizzaArea="pizzaArea"
-                @addIngredient="setIngredient(1, item)"
-              >
-                <span
-                  :class="[
-                    'filling',
-                    'filling--' + ingredientTranslateName(item).name(),
-                  ]"
-                >
+              <app-drag :ingredientId="item.id" :isDraggable="item.count < 3">
+                <span :class="['filling', 'filling--' + item.imgName]">
                   {{ item.name }}
                 </span>
-              </drag-n-drop>
+              </app-drag>
               <item-counter
                 :itemCount="item.count"
-                @toggleCounter="setIngredient($event, item)"
+                @toggleCounter="
+                  $emit('addIngredient', { count: $event, id: item.id })
+                "
               />
             </li>
           </ul>
@@ -60,12 +53,11 @@
 </template>
 
 <script>
-import { sauces, ingredients } from "../../../static/pizza.json";
-import { ingredientTranslateName } from "../../../common/helper";
+import { updateIngredient, togglePizzaState } from "@/common/helper";
 import ItemCounter from "../../../common/components/ItemCounter";
 import SelectorItem from "../../../common/components/SelectorItem";
 import RadioButton from "../../../common/components/RadioButton";
-import DragNDrop from "./DragNDrop";
+import AppDrag from "@/common/components/AppDrag";
 
 export default {
   name: "BuilderIngredientsSelector",
@@ -73,7 +65,7 @@ export default {
     ItemCounter,
     SelectorItem,
     RadioButton,
-    DragNDrop,
+    AppDrag,
   },
   props: {
     submitState: {
@@ -83,60 +75,31 @@ export default {
     pizzaArea: {
       required: true,
     },
-  },
-  data() {
-    return {
-      sauces,
-      ingredients,
-      pizzaCompound: [],
-    };
+    ingredients: {
+      type: Array,
+      required: true,
+    },
+    sauces: {
+      type: Array,
+      required: true,
+    },
   },
   methods: {
-    ingredientTranslateName,
-    setCompound() {
-      this.pizzaCompound.splice(0, this.pizzaCompound.length);
-      class Compound {
-        constructor(id, name, image, price) {
-          this.id = id;
-          this.name = name;
-          this.image = image;
-          this.price = price;
-          this.count = 0;
-        }
-      }
-      ingredients.forEach((item) => {
-        this.pizzaCompound.push(
-          new Compound(item.id, item.name, item.image, item.price)
-        );
-      });
-    },
-    setIngredientClass(image) {
-      const ingredientArr = image.split("/");
-      const ingredientName =
-        ingredientArr[ingredientArr.length - 1].split(".")[0];
-      return "filling--" + ingredientName;
-    },
+    togglePizzaState,
+    updateIngredient,
     selectSauce(sauce) {
       this.$emit("selectSauce", sauce);
     },
-    setIngredient(count, ingredient) {
-      ingredient.count += count;
-      this.$emit("setIngredient", {
-        ingredient: ingredient,
-        type: count,
-      });
+    radioValue(sauce) {
+      return sauce.name === "Томатный" ? "tomato" : "creamy";
     },
   },
   watch: {
     submitState() {
       if (this.submitState) {
-        this.setCompound();
+        this.updateIngredient();
       }
     },
-  },
-  mounted() {
-    this.selectSauce(sauces[1]);
-    this.setCompound();
   },
 };
 </script>

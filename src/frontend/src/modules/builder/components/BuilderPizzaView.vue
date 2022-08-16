@@ -1,5 +1,10 @@
 <template>
-  <div class="content__constructor" ref="pizzaArea">
+  <div
+    class="content__constructor"
+    @drop="onDragDrop($event)"
+    @dragenter.prevent
+    @dragover.prevent
+  >
     <div :class="['pizza', pizzaClass]">
       <div class="pizza__wrapper">
         <div
@@ -27,6 +32,10 @@ export default {
     },
   },
   methods: {
+    onDragDrop(e) {
+      const draggableItem = JSON.parse(e.dataTransfer.getData("item"));
+      this.$emit("addIngredient", { count: 1, id: draggableItem });
+    },
     compoundClass(compound) {
       if (compound.count > 0) {
         const ingredientArr = compound.image.split("/");
@@ -52,9 +61,6 @@ export default {
       }
       return pizzaClass;
     },
-  },
-  mounted() {
-    this.$emit("setPizzaArea", this.$refs.pizzaArea);
   },
 };
 </script>

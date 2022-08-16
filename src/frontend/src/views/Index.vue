@@ -5,15 +5,20 @@
         <div class="content__wrapper">
           <h1 class="title title--big">Конструктор пиццы</h1>
 
-          <builder-dough-selector @selectDough="setDough($event)" />
+          <builder-dough-selector
+            :dough="dough"
+            @selectDough="setDough($event)"
+          />
 
-          <builder-size-selector @selectSize="setSize($event)" />
+          <builder-size-selector :sizes="sizes" @selectSize="setSize($event)" />
 
           <builder-ingredients-selector
             :pizzaArea="pizzaArea"
             :submitState="submitState"
+            :ingredients="ingredients"
+            :sauces="sauces"
             @selectSauce="setSauce($event)"
-            @setIngredient="setIngredient($event)"
+            @addIngredient="setIngredient($event)"
           />
 
           <div class="content__pizza">
@@ -29,7 +34,7 @@
 
             <builder-pizza-view
               :pizzaSetup="pizzaSetup"
-              @setPizzaArea="setPizzaArea($event)"
+              @addIngredient="setIngredient($event)"
             />
 
             <builder-price-counter
@@ -46,12 +51,18 @@
 </template>
 
 <script>
-import { ingredients, sauces, sizes } from "../static/pizza.json";
+import {
+  normalizeDough as dough,
+  normalizeSize as sizes,
+  normalizeSauces as sauces,
+  normalizeIngredient as ingredients,
+} from "@/common/helper";
 import BuilderDoughSelector from "../modules/builder/components/BuilderDoughSelector";
 import BuilderSizeSelector from "../modules/builder/components/BuilderSizeSelector";
 import BuilderIngredientsSelector from "../modules/builder/components/BuilderIngredientsSelector";
 import BuilderPizzaView from "../modules/builder/components/BuilderPizzaView";
 import BuilderPriceCounter from "../modules/builder/components/BuilderPriceCounter";
+
 export default {
   name: "Index",
   components: {
@@ -66,6 +77,7 @@ export default {
       ingredients,
       sauces,
       sizes,
+      dough,
       pizzaSetup: {
         dough: {},
         size: {},
@@ -80,20 +92,18 @@ export default {
   methods: {
     setDough(dough) {
       this.pizzaSetup.dough = dough;
-      console.log(this.pizzaSetup.dough);
     },
     setSize(size) {
       this.pizzaSetup.size = size;
-      console.log(this.pizzaSetup.size);
     },
     setSauce(sauce) {
       this.pizzaSetup.sauce = sauce;
-      console.log(this.pizzaSetup.sauce);
     },
     setIngredient(data) {
       let isItem = false;
       this.pizzaSetup.ingredients.forEach((item, index, arr) => {
-        if (item.id === data.ingredient.id) {
+        if (item.id === data.id) {
+          item.count += data.count;
           if (item.count === 0) {
             arr.splice(index, 1);
           }
@@ -101,7 +111,8 @@ export default {
         }
       });
       if (!isItem) {
-        this.pizzaSetup.ingredients.push(data.ingredient);
+        this.ingredients[data.id - 1].count += data.count;
+        this.pizzaSetup.ingredients.push(this.ingredients[data.id - 1]);
       }
     },
     pizzaSubmit() {
@@ -115,9 +126,6 @@ export default {
     clearPizza() {
       this.pizzaSetup.ingredients = [];
       this.pizzaName = "";
-    },
-    setPizzaArea(area) {
-      this.pizzaArea = area;
     },
   },
   computed: {
@@ -141,6 +149,11 @@ export default {
       }
       return price;
     },
+  },
+  mounted() {
+    this.setDough(this.dough[1]);
+    this.setSize(this.sizes[2]);
+    this.setSauce(this.sauces[1]);
   },
 };
 </script>
