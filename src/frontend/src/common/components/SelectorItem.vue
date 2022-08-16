@@ -6,10 +6,8 @@
 
 <script>
 export default {
-  name: "SelectorItem"
-}
+  name: "SelectorItem",
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
