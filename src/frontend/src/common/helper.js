@@ -15,22 +15,13 @@ export const normalizeSize = [];
     normalizeSize.push({
       ...item,
       imgName: imgName,
-      state: item.multiplier === 3,
     });
   });
 })();
 
-export function togglePizzaState(array, item) {
-  console.log(array);
-  array.forEach((i) => {
-    i.state = false;
-  });
-  item.state = true;
-}
-
 export const normalizeIngredient = [];
 
-export function updateIngredient() {
+(function updateIngredient() {
   normalizeIngredient.splice(0, normalizeIngredient.length);
   ingredients.forEach((item) => {
     const ingredientArr = item.image.split("/");
@@ -38,11 +29,9 @@ export function updateIngredient() {
     normalizeIngredient.push({
       ...item,
       imgName: imgName,
-      count: 0,
     });
   });
-}
-updateIngredient();
+})();
 
 export const normalizeSauces = [];
 
@@ -50,7 +39,6 @@ export const normalizeSauces = [];
   sauces.forEach((sauce) => {
     normalizeSauces.push({
       ...sauce,
-      state: sauce.id === 2,
     });
   });
 })();
@@ -62,7 +50,6 @@ export const normalizeDough = [];
     normalizeDough.push({
       ...item,
       imgName: item.name === "Тонкое" ? "light" : "large",
-      state: item.name === "Тонкое",
     });
   });
 })();

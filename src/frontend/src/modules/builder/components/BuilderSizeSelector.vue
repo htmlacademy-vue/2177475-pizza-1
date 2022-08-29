@@ -10,13 +10,13 @@
           v-for="item in sizes"
           :key="item.id"
         >
-          <div @click="selectSize(item)">
+          <div>
             <radio-button
               class="visually-hidden"
               name="diameter"
               :value="item.imgName"
-              :radioState="item.state"
-              @justToggle="togglePizzaState(sizes, item)"
+              :radioState="item.id === selectedSize.id"
+              @justToggle="selectSize(item)"
             />
             <span>{{ item.name }}</span>
           </div>
@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import { togglePizzaState } from "@/common/helper";
 import SelectorItem from "../../../common/components/SelectorItem";
 import RadioButton from "../../../common/components/RadioButton";
 
@@ -42,9 +41,12 @@ export default {
       type: Array,
       required: true,
     },
+    selectedSize: {
+      type: Object,
+      required: true,
+    },
   },
   methods: {
-    togglePizzaState,
     selectSize(size) {
       this.$emit("selectSize", size);
     },

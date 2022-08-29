@@ -12,8 +12,8 @@
 export default {
   name: "AppDrag",
   props: {
-    ingredientId: {
-      type: Number,
+    ingredient: {
+      type: Object,
       required: true,
     },
     isDraggable: {
@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     dragStart(e) {
-      e.dataTransfer.setData("item", JSON.stringify(this.ingredientId));
+      e.dataTransfer.setData("item", JSON.stringify(this.ingredient));
     },
   },
 };

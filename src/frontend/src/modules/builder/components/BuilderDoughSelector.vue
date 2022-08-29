@@ -5,19 +5,19 @@
 
       <div class="sheet__content dough">
         <selector-item
-          :class="['dough__input', 'dough__input--' + item.imgName]"
-          v-for="item in dough"
-          :key="item.id"
+          :class="['dough__input', 'dough__input--' + doughItem.imgName]"
+          v-for="doughItem in dough"
+          :key="doughItem.id"
         >
-          <div @click="toggleRadio(item)">
+          <div>
             <radio-button
               name="dough"
-              :value="item.name"
-              :radioState="item.state"
-              @justToggle="togglePizzaState(dough, item)"
+              :value="doughItem.name"
+              :radioState="doughItem.id === selectedDough.id"
+              @justToggle="toggleRadio(doughItem)"
             />
-            <b>{{ item.name }}</b>
-            <span>{{ item.description }}</span>
+            <b>{{ doughItem.name }}</b>
+            <span>{{ doughItem.description }}</span>
           </div>
         </selector-item>
       </div>
@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import { togglePizzaState } from "@/common/helper";
 import RadioButton from "../../../common/components/RadioButton";
 import SelectorItem from "../../../common/components/SelectorItem";
 
@@ -35,7 +34,11 @@ export default {
   props: {
     dough: {
       type: Array,
-      required: false,
+      required: true,
+    },
+    selectedDough: {
+      type: Object,
+      required: true,
     },
   },
   components: {
@@ -43,9 +46,8 @@ export default {
     SelectorItem,
   },
   methods: {
-    togglePizzaState,
-    toggleRadio(dough) {
-      this.$emit("selectDough", dough);
+    toggleRadio(doughItem) {
+      this.$emit("selectDough", doughItem);
     },
   },
 };

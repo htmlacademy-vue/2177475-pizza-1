@@ -12,12 +12,12 @@
             v-for="sauce in sauces"
             :key="sauce.id"
           >
-            <div @click="selectSauce(sauce)">
+            <div>
               <radio-button
                 name="sauce"
                 :value="radioValue(sauce)"
-                :radioState="sauce.state"
-                @justToggle="togglePizzaState(sauces, sauce)"
+                :radioState="sauce.id === selectedSauce.id"
+                @justToggle="selectSauce(sauce)"
               />
               <span>{{ sauce.name }}</span>
             </div>
@@ -33,15 +33,18 @@
               v-for="item in ingredients"
               :key="item.id"
             >
-              <app-drag :ingredientId="item.id" :isDraggable="item.count < 3">
+              <app-drag
+                :ingredient="item"
+                :isDraggable="countItemNumber(item) < 3"
+              >
                 <span :class="['filling', 'filling--' + item.imgName]">
                   {{ item.name }}
                 </span>
               </app-drag>
               <item-counter
-                :itemCount="item.count"
+                :itemCount="countItemNumber(item)"
                 @toggleCounter="
-                  $emit('addIngredient', { count: $event, id: item.id })
+                  $emit('countIngredient', { count: $event, item: item })
                 "
               />
             </li>
@@ -53,7 +56,6 @@
 </template>
 
 <script>
-import { updateIngredient, togglePizzaState } from "@/common/helper";
 import ItemCounter from "../../../common/components/ItemCounter";
 import SelectorItem from "../../../common/components/SelectorItem";
 import RadioButton from "../../../common/components/RadioButton";
@@ -68,14 +70,11 @@ export default {
     AppDrag,
   },
   props: {
-    submitState: {
-      type: Boolean,
-      required: true,
-    },
-    pizzaArea: {
-      required: true,
-    },
     ingredients: {
+      type: Array,
+      required: true,
+    },
+    selectedIngredients: {
       type: Array,
       required: true,
     },
@@ -83,22 +82,26 @@ export default {
       type: Array,
       required: true,
     },
+    selectedSauce: {
+      type: Object,
+      required: true,
+    },
   },
   methods: {
-    togglePizzaState,
-    updateIngredient,
+    countItemNumber(ingredient) {
+      const currentIngredient = this.selectedIngredients.find((item) => {
+        return ingredient.id === item.id;
+      });
+      if (!currentIngredient) {
+        return 0;
+      }
+      return currentIngredient.count;
+    },
     selectSauce(sauce) {
       this.$emit("selectSauce", sauce);
     },
     radioValue(sauce) {
       return sauce.name === "Томатный" ? "tomato" : "creamy";
-    },
-  },
-  watch: {
-    submitState() {
-      if (this.submitState) {
-        this.updateIngredient();
-      }
     },
   },
 };

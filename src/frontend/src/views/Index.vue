@@ -7,18 +7,23 @@
 
           <builder-dough-selector
             :dough="dough"
+            :selectedDough="pizzaSetup.dough"
             @selectDough="setDough($event)"
           />
 
-          <builder-size-selector :sizes="sizes" @selectSize="setSize($event)" />
+          <builder-size-selector
+            :sizes="sizes"
+            :selectedSize="pizzaSetup.size"
+            @selectSize="setSize($event)"
+          />
 
           <builder-ingredients-selector
-            :pizzaArea="pizzaArea"
-            :submitState="submitState"
             :ingredients="ingredients"
+            :selectedIngredients="pizzaSetup.ingredients"
             :sauces="sauces"
+            :selectedSauce="pizzaSetup.sauce"
             @selectSauce="setSauce($event)"
-            @addIngredient="setIngredient($event)"
+            @countIngredient="countIngredient($event)"
           />
 
           <div class="content__pizza">
@@ -34,7 +39,7 @@
 
             <builder-pizza-view
               :pizzaSetup="pizzaSetup"
-              @addIngredient="setIngredient($event)"
+              @countIngredient="countIngredient($event)"
             />
 
             <builder-price-counter
@@ -79,19 +84,17 @@ export default {
       sizes,
       dough,
       pizzaSetup: {
-        dough: {},
-        size: {},
-        sauce: {},
+        dough: dough[1],
+        size: sizes[2],
+        sauce: sauces[1],
         ingredients: [],
       },
       pizzaName: "",
-      submitState: false,
-      pizzaArea: null,
     };
   },
   methods: {
-    setDough(dough) {
-      this.pizzaSetup.dough = dough;
+    setDough(item) {
+      this.pizzaSetup.dough = item;
     },
     setSize(size) {
       this.pizzaSetup.size = size;
@@ -99,29 +102,25 @@ export default {
     setSauce(sauce) {
       this.pizzaSetup.sauce = sauce;
     },
-    setIngredient(data) {
-      let isItem = false;
-      this.pizzaSetup.ingredients.forEach((item, index, arr) => {
-        if (item.id === data.id) {
-          item.count += data.count;
-          if (item.count === 0) {
-            arr.splice(index, 1);
-          }
-          isItem = true;
-        }
+    countIngredient(data) {
+      const ingredientIndex = this.pizzaSetup.ingredients.findIndex((item) => {
+        return item.id === data.item.id;
       });
-      if (!isItem) {
-        this.ingredients[data.id - 1].count += data.count;
-        this.pizzaSetup.ingredients.push(this.ingredients[data.id - 1]);
+      if (ingredientIndex === -1) {
+        this.pizzaSetup.ingredients.push({
+          ...data.item,
+          count: 1,
+        });
+      } else {
+        this.pizzaSetup.ingredients[ingredientIndex].count += data.count;
+        if (this.pizzaSetup.ingredients[ingredientIndex].count === 0) {
+          this.pizzaSetup.ingredients.splice(ingredientIndex, 1);
+        }
       }
     },
     pizzaSubmit() {
       this.$emit("pizzaSubmit", this.fullPrice);
       this.clearPizza();
-      this.submitState = true;
-      setTimeout(() => {
-        this.submitState = false;
-      }, 250);
     },
     clearPizza() {
       this.pizzaSetup.ingredients = [];
@@ -131,12 +130,8 @@ export default {
   computed: {
     fullPrice() {
       let price = 0;
-      if (this.pizzaSetup.dough.price) {
-        price += this.pizzaSetup.dough.price;
-      }
-      if (this.pizzaSetup.sauce.price) {
-        price += this.pizzaSetup.sauce.price;
-      }
+      price += this.pizzaSetup.dough.price;
+      price += this.pizzaSetup.sauce.price;
       if (this.pizzaSetup.ingredients) {
         let ingredientsPrice = 0;
         this.pizzaSetup.ingredients.forEach((item) => {
@@ -144,16 +139,9 @@ export default {
         });
         price += ingredientsPrice;
       }
-      if (this.pizzaSetup.size.multiplier) {
-        price *= this.pizzaSetup.size.multiplier;
-      }
+      price *= this.pizzaSetup.size.multiplier;
       return price;
     },
-  },
-  mounted() {
-    this.setDough(this.dough[1]);
-    this.setSize(this.sizes[2]);
-    this.setSauce(this.sauces[1]);
   },
 };
 </script>

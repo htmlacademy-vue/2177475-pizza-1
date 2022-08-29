@@ -34,7 +34,7 @@ export default {
   methods: {
     onDragDrop(e) {
       const draggableItem = JSON.parse(e.dataTransfer.getData("item"));
-      this.$emit("addIngredient", { count: 1, id: draggableItem });
+      this.$emit("countIngredient", { count: 1, item: draggableItem });
     },
     compoundClass(compound) {
       if (compound.count > 0) {

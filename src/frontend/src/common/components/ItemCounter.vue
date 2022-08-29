@@ -36,9 +36,7 @@ export default {
   },
   methods: {
     toggleCounter(value) {
-      console.log(this.itemCount);
       this.$emit("toggleCounter", value);
-      console.log(this.itemCount);
     },
   },
 };
